@@ -10,36 +10,36 @@ function RandomValue(min, max) {
     return Math.floor(Math.random() * (max - min) + min);
 }
 
-/**
- * 
- * 
- * fonction to tell the winner
- * @param player value of the player's life
- * @param monster value of the monster's life
- * @returns string
- */
-function checkWinner(player, monster) {
-    if (player <= 0 && monster > 0) {
-        alert("the monster got the better of you this time!");
-    } else if (player > 0 && monster <= 0) {
-        alert("congrats, you win!!!");
-    } else {
-        alert("no winner, both of you lost!");
-    }
-}
 
 const app = Vue.createApp({
     data() {
         return {
             monsterHealth: 100,
             playerHealth: 100,
-            currentRound: 0
+            currentRound: 0,
+            winner: null
         };
     },
     computed: {
         monsterBar() { return {width: this.monsterHealth + "%"} },
         playerBar() { return {width: this.playerHealth + "%"} },
         launch() { return this.currentRound % 4 !== 0; }
+    },
+    watch: {
+        playerHealth(value) {
+            if(value <= 0 && this.monsterHealth <= 0) {
+                this.winner = 'draw';
+            } else if (value <= 0) {
+                this.winner = 'monster';
+            }
+        },
+        monsterHealth(value) {
+            if (value <= 0 && this.playerHealth <= 0) {
+                this.winner = 'draw';
+            } else if (value <= 0) {
+                this.winner = 'player';
+            }
+        }
     },
     methods: {
         attackMonster() {
