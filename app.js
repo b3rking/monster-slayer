@@ -17,7 +17,8 @@ const app = Vue.createApp({
             monsterHealth: 100,
             playerHealth: 100,
             currentRound: 0,
-            winner: null
+            winner: null,
+            logMessages: []
         };
     },
     computed: {
@@ -54,20 +55,20 @@ const app = Vue.createApp({
             this.currentRound++;
             const attackPower = RandomValue(5, 12);
             this.monsterHealth -= attackPower;
+            this.addLogMessage('player', 'attack monster lost ', attackPower);
             this.attackPlayer();
-            checkWinner(this.playerHealth, this.monsterHealth);
         },
         attackPlayer() {
             const attackPower = RandomValue(8, 15);
             this.playerHealth -= attackPower;
-            checkWinner(this.playerHealth, this.monsterHealth);
+            this.addLogMessage('monster', 'attack player lost ', attackPower);
         },
         specialAttack() {
             this.currentRound = 1;
             const attackPower = RandomValue(18, 25);
             this.monsterHealth -= attackPower;
+            this.addLogMessage('player', 'special attack monster lost ', attackPower);
             this.attackPlayer();
-            checkWinner(this.playerHealth, this.monsterHealth);
         },
         healPlayer() {
             const heal = RandomValue(8, 20);
@@ -76,17 +77,26 @@ const app = Vue.createApp({
             } else {
                 this.playerHealth += heal;
             }
+            this.addLogMessage('player', 'heal and got ', heal);
             this.attackPlayer();
-            checkWinner(this.playerHealth, this.monsterHealth);
         },
         start() {
             this.monsterHealth = 100;
             this.playerHealth = 100;
             this.currentRound = 0;
             this.winner = null;
+            this.logMessages = [];
         },
         surrender() {
             this.winner = 'monster';
+            this.addLogMessage('player', 'surrended with ', this.playerHealth);
+        },
+        addLogMessage(who, what, value) {
+            this.logMessages.unshift({
+                actionBy: who,
+                actionType: what,
+                actionValue: value
+            });
         }
     }
 });
